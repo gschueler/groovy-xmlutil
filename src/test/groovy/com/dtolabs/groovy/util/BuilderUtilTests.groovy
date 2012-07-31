@@ -37,6 +37,7 @@ class BuilderUtilTests extends GroovyTestCase {
 
     void testPlural() {
         assertMapToDom '<blahs><blah>a</blah><blah>b</blah><blah>c</blah></blahs>', ['blah[s]': ['a', 'b', 'c']]
+        assertMapToDom '<relationships><relationship>a</relationship><relationship>b</relationship></relationships>', ['relationship[s]': ['a', 'b']]
     }
 
     void testCdata() {
