@@ -39,7 +39,7 @@ import groovy.xml.*
  * for collections.</p>
  * <p>
  * Attributes can be created by modifying the key to have a prefix of "@attr:".  This can be done with the
- * {@link #addAttribute(java.util.Map, java.lang.String, def)  } or {@link #asAttributeName(java.lang.String)  } 
+ * {@link #addAttribute(java.util.Map, java.lang.String, def)  } or {@link #asAttributeName(java.lang.String)  }
  * or {@link #makeAttribute(java.util.Map, java.lang.String)  } methods.
  * </p>
  * <p>
@@ -72,6 +72,35 @@ import groovy.xml.*
  * then the "<cdata>" suffix is removed, and the string contents serialized in a CDATA section.  {@link #asCDATAName(java.lang.String) }
  * will return the correct cdata key name from the original key.
  * </p>
+ * <p>
+ *  Explicit text content for a map can be defined with a key of "_TEXT_".  This value will become the text
+ *  content of the element, and can be used if there are other map entries as well such as attributes. The text
+ *  content will be generated before any sub-elements.
+ * </p>
+ * <p>
+ *  Examples:
+ * </p>
+ * <p>
+ *  Basic usage to generate a XML string from a Map:
+ * </p>
+ * <pre>
+ *  def map = [root:[element: ['@attr:myattr':'myvalue',subelement:'text']]]
+ * def writer = new StringWriter()
+ * def mp = new MarkupBuilder(writer)
+ * def bu = new BuilderUtil()
+ * bu.mapToDom(map, mp, nsprefixes)
+ * writer.toString()
+ * </pre>
+ * <p>
+ *     This will generate:
+ * </p>
+ * <pre>
+ * &lt;root&gt;
+ *   &lt;element myattr='myvalue'&gt;
+ *     &lt;subelement&gt;text&lt;/subelement&gt;
+ *   &lt;/element&gt;
+ * &lt;/root&gt;
+ * </pre>
  *
  */
 class BuilderUtil{
@@ -84,6 +113,19 @@ class BuilderUtil{
     Map namespaces=[:]
     public BuilderUtil(){
         context=new ArrayList()
+    }
+    /**
+     * Utility method to generate an XML string directly
+     * @param map
+     * @param nsprefixes
+     * @return
+     */
+    public static String mapToXmlString(Map map, nsprefixes=[:]){
+        def writer = new StringWriter()
+        def mp = new MarkupBuilder(writer)
+        def bu = new BuilderUtil()
+        bu.mapToDom(map, mp,nsprefixes)
+        writer.toString()
     }
     
     public mapToDom( Map map, builder,nsprefixes=[:]){
